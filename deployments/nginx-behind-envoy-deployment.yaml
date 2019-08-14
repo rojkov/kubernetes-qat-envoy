@@ -11,6 +11,10 @@ spec:
       targetPort: 9000
       protocol: TCP
       name: https
+    - port: 7000
+      targetPort: 7000
+      protocol: TCP
+      name: http
   selector:
     app: nginx-behind-envoy
 ---
@@ -50,6 +54,33 @@ data:
                     route:
                       cluster: local_service
               http_filters:
+              - name: envoy.router
+                config: {}
+      - address:
+          socket_address:
+            address: 0.0.0.0
+            port_value: 7000
+        filter_chains:
+          filters:
+          - name: envoy.http_connection_manager
+            config:
+              codec_type: auto
+              stat_prefix: ingress_http
+              route_config:
+                name: local_route
+                require_ssl: all
+                virtual_hosts:
+                - name: backend
+                  domains:
+                  - "*"
+                  routes:
+                  - match:
+                      prefix: "/"
+                    route:
+                      cluster: local_service
+              http_filters:
+              - name: envoy.qatzip
+                config: {}
               - name: envoy.router
                 config: {}
       clusters:
@@ -106,6 +137,9 @@ spec:
         - name: envoy-sidecar
           image: envoy-qat:devel
           imagePullPolicy: IfNotPresent
+          securityContext:
+            capabilities:
+              add: ["IPC_LOCK"]
           command:
             - "/envoy-static"
           args:
@@ -117,15 +151,19 @@ spec:
               value: /etc/envoy/config/openssl.cnf
           resources:
             limits:
-              qat.intel.com/cy1_dc0: 1
+              qat.intel.com/cy1_dc1: 1
               cpu: 2
               memory: "2G"
+              hugepages-2Mi: "200Mi"
             requests:
               cpu: 2
               memory: "2G"
+              hugepages-2Mi: "200Mi"
           ports:
             - containerPort: 9000
           volumeMounts:
+            - name: hugepage
+              mountPath: /dev/hugepages
             - name: tls
               mountPath: /etc/envoy/tls
               readOnly: true
@@ -133,6 +171,9 @@ spec:
               mountPath: /etc/envoy/config
               readOnly: true
       volumes:
+        - name: hugepage
+          emptyDir:
+            medium: HugePages
         - name: tls
           secret:
             secretName: envoy-tls-secret

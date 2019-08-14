@@ -1,7 +1,7 @@
 [submodule "envoy"]
 	path = envoy
-	url = https://github.com/envoyproxy/envoy.git
-	branch = master
+	url = https://github.com/rojkov/envoy.git
+	branch = qatzip
 [submodule "intel-device-plugins-for-kubernetes"]
 	path = intel-device-plugins-for-kubernetes
 	url = https://github.com/intel/intel-device-plugins-for-kubernetes.git

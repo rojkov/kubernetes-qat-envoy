@@ -22,6 +22,11 @@ libraries:
     version: "1.7.l.4.6.0-00025"
     sha256: "8381567a11766ab89e556a41aad9a71031209f68b27ae0c49ff59757661162f4"
 
+  qatzip:
+    url: "https://github.com/intel/QATzip/archive"
+    version: "1.0.0"
+    sha256: "4161d7dd891dac910d450aea05e0957ecce605535f8743b655c836346f4bd8ae"
+
   qat_engine:
     url: "https://github.com/intel/QAT_Engine/archive"
     version: "0.5.42"

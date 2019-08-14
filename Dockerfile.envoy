@@ -22,6 +22,7 @@ COPY --from=builder /usr/lib/libqat.so /usr/lib/
 COPY --from=builder /usr/bin/adf_ctl /usr/bin
 COPY --from=builder /usr/lib/x86_64-linux-gnu/engines-1.1/qat.so /usr/lib/x86_64-linux-gnu/engines-1.1/qat.so
 COPY --from=builder /envoy-openssl/bazel-bin/envoy /envoy-static
+COPY --from=builder /usr/local/lib64/libqatzip.so /usr/lib/
 
 RUN ln -s /usr/lib/libqat.so /usr/lib/libqat.so.0 && \
     ln -s /usr/lib/libqat.so /usr/lib/libqat.so.0.0.0 && \

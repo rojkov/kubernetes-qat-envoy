@@ -193,6 +193,38 @@ build_install_qat_engine() {
 	popd
 }
 
+build_install_qatzip_library() {
+	info "Download and install QATzip library"
+
+	local distro_specific_opts=""
+	local qatzip_url
+	local qatzip_version
+	local qatzip_sha256
+	local qatzip_tar
+
+	qatzip_url="$(versions_yaml "libraries.qatzip.url")"
+	qatzip_version="$(versions_yaml "libraries.qatzip.version")"
+	qatzip_sha256="$(versions_yaml "libraries.qatzip.sha256")"
+
+	qatzip_tar="qatzip.tgz"
+	curl -L "${qatzip_url}"/v"${qatzip_version}".tar.gz -o "${qatzip_tar}"
+	qatzip_sha256_sum="$(sha256sum "${qatzip_tar}" | cut -d' ' -f1)"
+	# check sha256
+	if [ "${qatzip_sha256_sum}" != "${qatzip_sha256}" ]; then
+		die "Mismatch for QATzip sha256. Expecting ${qatzip_sha256}, got ${qatzip_sha256_sum}"
+	fi
+	tar -xf "${qatzip_tar}"
+	ln -s "QATzip-${qatzip_version}" QATZIP_Lib
+	pushd "QATzip-${qatzip_version}"
+
+	./configure  --with-ICP_ROOT=$QAT_LIB_DIR
+	make -j "$(jobs)"
+	make all install
+
+	ldconfig
+	popd
+}
+
 build_envoy() {
 	pushd "${ENVOY_DIR}"
 	case $ID in
@@ -219,6 +251,9 @@ main() {
 
 	info "Build and install QAT engine"
 	build_install_qat_engine
+
+	info "Build and install QATzip library"
+	build_install_qatzip_library
 
 	info "Build Envoy"
 	build_envoy

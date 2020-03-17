@@ -1,7 +1,10 @@
 licenses(["notice"])  # Apache 2
 
 QAT_INCLUDE_PATHS = [
-	"-I /QAT_lib/quickassist/include",
+	"-I /QAT_Lib/quickassist/include",
+	"-I /QAT_Lib/quickassist/include/dc",
+	"-I /QAT_Lib/quickassist/lookaside/access_layer/include",
+	"-I /QAT_Lib/quickassist/utilities/libusdm_drv",
 ]
 
 cc_library(

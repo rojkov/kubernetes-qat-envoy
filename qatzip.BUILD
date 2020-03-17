@@ -1,10 +1,7 @@
 licenses(["notice"])  # Apache 2
 
-QAT_INCLUDE_PATHS = [
-	"-I /QAT_Lib/quickassist/include",
-	"-I /QAT_Lib/quickassist/include/dc",
-	"-I /QAT_Lib/quickassist/lookaside/access_layer/include",
-	"-I /QAT_Lib/quickassist/utilities/libusdm_drv",
+QAT_DEFINES = [
+    "-DADF_PCI_API",
 ]
 
 cc_library(
@@ -15,7 +12,7 @@ cc_library(
         "include/*.h",
     ]),
     hdrs = glob(["include/*.h"]),
-    copts = QAT_INCLUDE_PATHS,
+    copts = QAT_DEFINES,
     includes = [
         "include",
         "src",

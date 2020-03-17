@@ -18,7 +18,8 @@ new_local_repository(
 
 new_local_repository(
     name = "qat",
-    path = "/usr/lib",
+    #path = "/usr/lib",
+    path = "/",
     build_file = "qat_host_shared.BUILD"
 )
 

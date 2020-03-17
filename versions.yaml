@@ -19,8 +19,8 @@ libraries:
 
   qat:
     url: "https://01.org/sites/default/files/downloads"
-    version: "1.7.l.4.6.0-00025"
-    sha256: "8381567a11766ab89e556a41aad9a71031209f68b27ae0c49ff59757661162f4"
+    version: "qat1.7.l.4.8.0-00005.tar.gz"
+    sha256: "5d0770d20fd77c516a247f2917e47048432cea1394c00d9aa8b0b6a85030fd2c"
 
   qat_engine:
     url: "https://github.com/intel/QAT_Engine/archive"

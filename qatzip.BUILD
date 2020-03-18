@@ -12,7 +12,7 @@ cc_library(
         "include/*.h",
     ]),
     hdrs = glob(["include/*.h"]),
-    #copts = QAT_DEFINES,
+    copts = QAT_DEFINES,
     includes = [
         "include",
         "src",

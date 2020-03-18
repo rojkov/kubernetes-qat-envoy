@@ -2,19 +2,12 @@ workspace(name = "kqe")
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
-#http_archive(
-#    name = "qatzip",
-#    build_file = "@//:qatzip.BUILD",
-#    sha256 = "461c155fa9153c217c5dc7d7cf44cb31106ab6e5754a7ee5fbd8121b4c6cdd4b",
-#    strip_prefix = "QATzip-1.0.1",
-#	urls = ["https://github.com/intel/QATzip/archive/v1.0.1.tar.gz"],
-#)
 http_archive(
     name = "qatzip",
     build_file = "@//:qatzip.BUILD",
-    sha256 = "4161d7dd891dac910d450aea05e0957ecce605535f8743b655c836346f4bd8ae",
-    strip_prefix = "QATzip-1.0.0",
-	urls = ["https://github.com/intel/QATzip/archive/v1.0.0.tar.gz"],
+    sha256 = "461c155fa9153c217c5dc7d7cf44cb31106ab6e5754a7ee5fbd8121b4c6cdd4b",
+    strip_prefix = "QATzip-1.0.1",
+	urls = ["https://github.com/intel/QATzip/archive/v1.0.1.tar.gz"],
 )
 
 new_local_repository(
@@ -23,24 +16,11 @@ new_local_repository(
     build_file = "envoy-openssl/openssl_host_shared.BUILD"
 )
 
-#new_local_repository(
-#    name = "qat",
-#    #path = "/usr/lib",
-#    path = "/",
-#    build_file = "qat_host_shared.BUILD"
-#)
-http_archive(
+new_local_repository(
     name = "qat",
-    build_file = "@//:qat/qat.BUILD",
-    sha256 = "8381567a11766ab89e556a41aad9a71031209f68b27ae0c49ff59757661162f4",
-	urls = ["https://01.org/sites/default/files/downloads/qat1.7.l.4.6.0-00025.tar.gz"],
-	patches = [
-		"@//:qat/0001-Add-extern-C-to-several-headers.patch",
-		"@//:qat/0002-cpa_types-do-not-define-TRUE-and-FALSE.patch",
-		"@//:qat/0003-Fix-openssl-header-include-paths.patch",
-		"@//:qat/0004-Udev-mock-implementation.patch",
-	],
-	patch_args = ["-p1"],
+    #path = "/usr/lib",
+    path = "/",
+    build_file = "qat_host_shared.BUILD"
 )
 
 local_repository(

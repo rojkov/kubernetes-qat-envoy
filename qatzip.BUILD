@@ -1,6 +1,6 @@
 licenses(["notice"])  # Apache 2
 
-QAT_DEFINES = [
+QATZIP_DEFINES = [
     "-DADF_PCI_API",
 ]
 
@@ -12,7 +12,7 @@ cc_library(
         "include/*.h",
     ]),
     hdrs = glob(["include/*.h"]),
-    copts = QAT_DEFINES,
+    copts = QATZIP_DEFINES,
     includes = [
         "include",
         "src",

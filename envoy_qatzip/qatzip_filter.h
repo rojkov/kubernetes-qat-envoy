@@ -1,8 +1,8 @@
 #pragma once
 
-#include "envoy-qatzip/qatzip.pb.h"
+#include "envoy_qatzip/qatzip.pb.h"
 
-#include "envoy-qatzip/compressor/qatzip_compressor_impl.h"
+#include "envoy_qatzip/compressor/qatzip_compressor_impl.h"
 
 #include "extensions/filters/http/common/compressor/compressor.h"
 

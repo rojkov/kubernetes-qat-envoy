@@ -1,7 +1,7 @@
 #pragma once
 
-#include "envoy-qatzip/qatzip.pb.h"
-#include "envoy-qatzip/qatzip.pb.validate.h"
+#include "envoy_qatzip/qatzip.pb.h"
+#include "envoy_qatzip/qatzip.pb.validate.h"
 
 #include "extensions/filters/http/common/factory_base.h"
 #include "extensions/filters/http/well_known_names.h"

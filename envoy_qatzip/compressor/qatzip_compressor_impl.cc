@@ -1,4 +1,4 @@
-#include "envoy-qatzip/compressor/qatzip_compressor_impl.h"
+#include "envoy_qatzip/compressor/qatzip_compressor_impl.h"
 
 #include <memory>
 

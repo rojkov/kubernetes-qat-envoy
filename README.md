@@ -13,12 +13,12 @@ Clone this repository with submodules:
 Then go to the created directory and fetch the QAT driver:
 
     $ cd kubernetes-qat-envoy
-    $ wget https://01.org/sites/default/files/downloads/qat1.7.l.4.6.0-00025.tar.gz
+    $ wget https://01.org/sites/default/files/downloads/qat1.7.l.4.8.0-00005.tar.gz
 
 Check that the correct archive has been loaded by calculating its sha256 checksum:
 
-    $ sha256sum qat1.7.l.4.6.0-00025.tar.gz
-    8381567a11766ab89e556a41aad9a71031209f68b27ae0c49ff59757661162f4  qat1.7.l.4.6.0-00025.tar.gz
+    $ sha256sum qat1.7.l.4.8.0-00005.tar.gz
+    5d0770d20fd77c516a247f2917e47048432cea1394c00d9aa8b0b6a85030fd2c  qat1.7.l.4.8.0-00005.tar.gz
 
 ## Create a container for QAT-accelerated Envoy
 

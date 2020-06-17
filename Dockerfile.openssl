@@ -23,7 +23,10 @@ RUN swupd update && \
 
 WORKDIR /QAT_Lib
 
+ADD 0001-QAT-Compression-drop-DC_CNV_EXTENDED_CAPABILITY-chec.patch /
+RUN patch -p1 < /0001-QAT-Compression-drop-DC_CNV_EXTENDED_CAPABILITY-chec.patch
 RUN sed -i -e 's/cmn_ko$//' -e 's/lac_kernel$//' quickassist/Makefile && \
+    sed -i -e 's:hugepages/qat:hugepages:' quickassist/utilities/libusdm_drv/linux/user_space/qae_mem_hugepage_utils.c && \
     KERNEL_SOURCE_ROOT=/tmp ./configure && \
     make quickassist-all adf-ctl-all && \
     install -m 755 build/libqat_s.so /usr/lib/ && \

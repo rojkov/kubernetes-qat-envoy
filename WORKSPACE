@@ -7,6 +7,8 @@ http_archive(
     build_file = "@//:qatzip.BUILD",
     sha256 = "461c155fa9153c217c5dc7d7cf44cb31106ab6e5754a7ee5fbd8121b4c6cdd4b",
     strip_prefix = "QATzip-1.0.1",
+    patch_args = ["-p1"],
+    patches = ["//:0001-qzip-fix-format-truncation.patch"],
     urls = ["https://github.com/intel/QATzip/archive/v1.0.1.tar.gz"],
 )
 

@@ -36,6 +36,7 @@ envoy_cc_extension(
         ":compressor_lib",
 		":qatzip_cc_proto",
         "@envoy//source/common/http:headers_lib",
-        "@envoy//source/extensions/compression/common/compressor:compressor_factory_base_lib",
+        "@envoy//include/envoy/compression/compressor:compressor_config_interface",
+        "@envoy//include/envoy/compression/compressor:compressor_factory_interface",
     ],
 )

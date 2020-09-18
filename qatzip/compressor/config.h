@@ -1,12 +1,13 @@
 #pragma once
 
-#include "envoy/compression/compressor/factory.h"
-#include "qatzip/compressor/qatzip.pb.h"
-#include "qatzip/compressor/qatzip.pb.validate.h"
-
 #include "common/http/headers.h"
 
-#include "extensions/compression/common/compressor/factory_base.h"
+#include "envoy/compression/compressor/factory.h"
+#include "envoy/compression/compressor/config.h"
+#include "envoy/thread_local/thread_local.h"
+
+#include "qatzip/compressor/qatzip.pb.h"
+#include "qatzip/compressor/qatzip.pb.validate.h"
 #include "qatzip/compressor/qatzip_compressor_impl.h"
 
 namespace Envoy {
@@ -27,7 +28,7 @@ const std::string& qatzipExtensionName() {
 class QatzipCompressorFactory : public Envoy::Compression::Compressor::CompressorFactory {
 public:
   QatzipCompressorFactory(
-      const qatzip::compressor::Qatzip& qatzip);
+      const qatzip::compressor::Qatzip& qatzip, Server::Configuration::FactoryContext& context);
 
   // Envoy::Compression::Compressor::CompressorFactory
   Envoy::Compression::Compressor::CompressorPtr createCompressor() override;
@@ -37,18 +38,44 @@ public:
   }
 
 private:
+  struct QatzipThreadLocal : public ThreadLocal::ThreadLocalObject {
+    QatzipThreadLocal(QzSessionParams_T params);
+    virtual ~QatzipThreadLocal();
+    QzSession_T* getSession();
+
+    QzSessionParams_T params_;
+    QzSession_T session_;
+    bool initialized_;
+  };
+
   const uint32_t chunk_size_;
+  ThreadLocal::SlotPtr tls_slot_;
 };
 
 class QatzipCompressorLibraryFactory
-    : public Compression::Common::Compressor::CompressorLibraryFactoryBase<
-          qatzip::compressor::Qatzip> {
+    : public Envoy::Compression::Compressor::NamedCompressorLibraryConfigFactory {
 public:
-  QatzipCompressorLibraryFactory() : CompressorLibraryFactoryBase(qatzipExtensionName()) {}
+  QatzipCompressorLibraryFactory() : name_{qatzipExtensionName()} {}
+
+  Envoy::Compression::Compressor::CompressorFactoryPtr
+  createCompressorFactoryFromProto(const Protobuf::Message& proto_config,
+                                   Server::Configuration::FactoryContext& context) override {
+    return createCompressorFactoryFromProtoTyped(
+        MessageUtil::downcastAndValidate<const qatzip::compressor::Qatzip&>(proto_config,
+                                                             context.messageValidationVisitor()), context);
+  }
+
+  ProtobufTypes::MessagePtr createEmptyConfigProto() override {
+    return std::make_unique<qatzip::compressor::Qatzip>();
+  }
+
+  std::string name() const override { return name_; }
 
 private:
   Envoy::Compression::Compressor::CompressorFactoryPtr createCompressorFactoryFromProtoTyped(
-      const qatzip::compressor::Qatzip& config) override;
+      const qatzip::compressor::Qatzip& config, Server::Configuration::FactoryContext& context);
+
+  const std::string name_;
 };
 
 DECLARE_FACTORY(QatzipCompressorLibraryFactory);

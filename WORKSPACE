@@ -29,7 +29,7 @@ local_repository(
 
 local_repository(
     name = "envoy_build_config",
-    path = "envoy-openssl/envoy_build_config",
+    path = "envoy_build_config",
 )
 
 local_repository(

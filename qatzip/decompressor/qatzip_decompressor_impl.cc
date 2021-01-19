@@ -25,14 +25,24 @@ void QatzipDecompressorImpl::decompress(const Buffer::Instance& input_buffer, Bu
     stream_.in = static_cast<unsigned char*>(input_slice.mem_);
 
     while (avail_in_ > 0) {
-      process(output_buffer, 0);
+      if (!process(output_buffer, 0)) {
+        // finalizeOutput
+        const size_t n_output = chunk_size_ - avail_out_;
+        if (n_output > 0) {
+          output_buffer.add(static_cast<void*>(chunk_char_ptr_.get()), n_output);
+        }
+        return;
+      }
     }
   }
 
+  bool success;
   do {
-    process(output_buffer, 1);
-  } while (stream_.pending_out > 0);
+    success = process(output_buffer, 1);
+    printf("XXX: pending_out %u\n", stream_.pending_out);
+  } while (success && stream_.pending_out > 0);
 
+  // finalizeOutput
   const size_t n_output = chunk_size_ - avail_out_;
   if (n_output > 0) {
     output_buffer.add(static_cast<void*>(chunk_char_ptr_.get()), n_output);

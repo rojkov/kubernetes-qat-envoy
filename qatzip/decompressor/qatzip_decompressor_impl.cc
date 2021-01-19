@@ -40,6 +40,7 @@ void QatzipDecompressorImpl::decompress(const Buffer::Instance& input_buffer, Bu
 }
 
 bool QatzipDecompressorImpl::process(Buffer::Instance& output_buffer, unsigned int last) {
+  printf("XXX: %zu\n", avail_in_);
   stream_.in_sz = avail_in_;
   stream_.out_sz = avail_out_;
   auto status = qzDecompressStream(session_, &stream_, last);

@@ -20,8 +20,8 @@ EXTENSIONS = {
     # Compression
     #
 
-    "envoy.compression.gzip.compressor":                "//source/extensions/compression/gzip/compressor:config",
-    "envoy.compression.gzip.decompressor":              "//source/extensions/compression/gzip/decompressor:config",
+    "envoy.compression.gzip.compressor":                "@envoy//source/extensions/compression/gzip/compressor:config",
+    "envoy.compression.gzip.decompressor":              "@envoy//source/extensions/compression/gzip/decompressor:config",
 
     #
     # gRPC Credentials Plugins
@@ -44,7 +44,8 @@ EXTENSIONS = {
     "envoy.filters.http.aws_request_signing":           "@envoy_openssl//source/extensions/filters/http/aws_request_signing:config",
     "envoy.filters.http.buffer":                        "@envoy//source/extensions/filters/http/buffer:config",
     "envoy.filters.http.cache":                         "@envoy//source/extensions/filters/http/cache:config",
-    "envoy.filters.http.compressor":                    "//source/extensions/filters/http/compressor:config",
+    "envoy.filters.http.compressor":                    "@envoy//source/extensions/filters/http/compressor:config",
+    "envoy.filters.http.decompressor":                  "@envoy//source/extensions/filters/http/decompressor:config",
     "envoy.filters.http.cors":                          "@envoy//source/extensions/filters/http/cors:config",
     "envoy.filters.http.csrf":                          "@envoy//source/extensions/filters/http/csrf:config",
     "envoy.filters.http.dynamic_forward_proxy":         "@envoy//source/extensions/filters/http/dynamic_forward_proxy:config",

@@ -13,6 +13,7 @@ envoy_cc_binary(
     repository = "@envoy",
     deps = [
         "//qatzip/compressor:config",
+        "//qatzip/decompressor:config",
         "@envoy//source/exe:envoy_main_entry_lib",
     ],
 )

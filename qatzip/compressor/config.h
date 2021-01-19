@@ -27,6 +27,7 @@ const std::string& qatzipExtensionName() {
 
 class QatzipCompressorFactory : public Envoy::Compression::Compressor::CompressorFactory {
 public:
+ // TODO: replace `context` with an allocated TLS slot. Also in decompressor.
   QatzipCompressorFactory(
       const qatzip::compressor::Qatzip& qatzip, Server::Configuration::FactoryContext& context);
 

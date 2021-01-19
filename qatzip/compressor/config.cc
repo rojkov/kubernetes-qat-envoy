@@ -54,7 +54,7 @@ QatzipCompressorFactory::QatzipCompressorFactory(
       tls_slot_(context.threadLocal().allocateSlot()) {
   QzSessionParams_T params;
 
-  int status = qzGetDefaults(&params);
+  const int status = qzGetDefaults(&params);
   RELEASE_ASSERT(status == QZ_OK, "failed to initialize hardware");
   params.comp_lvl = compressionLevelUint(qatzip.compression_level().value());
   params.hw_buff_sz = hardwareBufferSizeEnum(qatzip.hardware_buffer_size());

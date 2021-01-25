@@ -2,6 +2,7 @@ licenses(["notice"])  # Apache 2
 
 QATZIP_DEFINES = [
     "-DADF_PCI_API",
+    "-DQATZIP_DEBUG",
 ]
 
 cc_library(

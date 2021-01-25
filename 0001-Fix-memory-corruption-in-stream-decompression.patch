@@ -1,0 +1,99 @@
+From 071f65194994a75604acb6b6d93c95d745cacf27 Mon Sep 17 00:00:00 2001
+From: Dmitry Rozhkov <dmitry.rozhkov@intel.com>
+Date: Mon, 25 Jan 2021 11:43:16 +0200
+Subject: [PATCH 1/4] Fix memory corruption in stream decompression
+
+There might be a situation after a call to qzDecompressStream() when
+the stream's pending_out and pending_in are both greater than zero.
+A user is supposed to repeatedly call the function until QATzip's output
+buffer is empty. Then the user's input gets copied to the input buffer
+until buffer_in is equal to the buffer's size.
+
+The problem here is the data that is already in the buffer doesn't get
+moved to the beginning of the buffer before appending new input to it.
+As result the newly appended data gets copied beyond the input buffer's
+boundary.
+
+The proposed fix extends the stream's state with additional fields used
+to flush the input buffer before copying new input to it.
+Alternatively we can just shift the pending data to the begining of the
+input buffer.
+---
+ src/qatzip_internal.h |  2 ++
+ src/qatzip_stream.c   | 19 ++++++++++++++++++-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+diff --git a/src/qatzip_internal.h b/src/qatzip_internal.h
+index 75b80b5..a2dc1bf 100755
+--- a/src/qatzip_internal.h
++++ b/src/qatzip_internal.h
+@@ -196,6 +196,8 @@ typedef struct QzStreamBuf_S {
+     unsigned char *in_buf;
+     unsigned char *out_buf;
+     unsigned int out_offset;
++    unsigned int in_offset;
++    int flush_more;
+ } QzStreamBuf_T;
+ 
+ typedef struct ThreadData_S {
+diff --git a/src/qatzip_stream.c b/src/qatzip_stream.c
+index 1e450f4..9e7777f 100644
+--- a/src/qatzip_stream.c
++++ b/src/qatzip_stream.c
+@@ -72,6 +72,8 @@ int initStream(QzSession_T *sess, QzStream_T *strm)
+     }
+ 
+     stream_buf->out_offset = 0;
++    stream_buf->in_offset = 0;
++    stream_buf->flush_more = 0;
+     stream_buf->buf_len = qz_sess->sess_params.strm_buff_sz;
+     stream_buf->in_buf = qzMalloc(stream_buf->buf_len, NODE_0, PINNED_MEM);
+     stream_buf->out_buf = qzMalloc(stream_buf->buf_len, NODE_0, PINNED_MEM);
+@@ -378,6 +380,12 @@ int qzDecompressStream(QzSession_T *sess, QzStream_T *strm, unsigned int last)
+         produced += copied_output;
+         if (0 == copied_output) {
+             rc = QZ_OK;
++            if (strm->pending_in > 0) {
++                /* We need to handle all the input that has left pending in the input buffer next time we are called.
++                 * Otherwise we'd append additional bits to the pending data, violate the buffer's boundary and
++                 * corrupt the memory behind the boundary. */
++                stream_buf->flush_more = 1;
++            }
+             QZ_DEBUG("No space for pending output...\n");
+             goto done;
+         }
+@@ -386,7 +394,7 @@ int qzDecompressStream(QzSession_T *sess, QzStream_T *strm, unsigned int last)
+ 
+     while (0 == strm->pending_out) {
+ 
+-        if (1 == copy_more) {
++        if (1 == copy_more && stream_buf->flush_more != 1) {
+             copied_input_last = copied_input;
+             copied_input += copyStreamInput(strm, strm->in + consumed);
+ 
+@@ -400,6 +408,14 @@ int qzDecompressStream(QzSession_T *sess, QzStream_T *strm, unsigned int last)
+             }
+         }
+ 
++        if (stream_buf->flush_more == 1) {
++            /* We need to flush all the input that has left pending in the input buffer since the previous call to this function.
++             * Otherwise we'd append additional bits to the pending data, violate the buffer's boundary and
++             * corrupt the memory behind the boundary. */
++            stream_buf->flush_more = 0;
++            inbuf_offset = stream_buf->in_offset;
++        }
++
+         input_len = strm->pending_in;
+         output_len = stream_buf->buf_len;
+ 
+@@ -418,6 +434,7 @@ int qzDecompressStream(QzSession_T *sess, QzStream_T *strm, unsigned int last)
+         }
+ 
+         inbuf_offset += input_len;
++        stream_buf->in_offset = inbuf_offset;
+         consumed += input_len;
+         strm->pending_in -= input_len;
+         strm->pending_out = output_len;
+-- 
+2.26.2
+

@@ -19,7 +19,7 @@ public:
   ~QatzipDecompressorImpl() override;
 
   // Compression::Decompressor::Decompressor
-  void decompress(const Buffer::Instance& input_buffer, Buffer::Instance& output_buffer) override;
+  void decompress(const Buffer::Instance& input_buffer, Buffer::Instance& output_buffer, const bool last) override;
 
 private:
   bool process(Buffer::Instance& output_buffer, unsigned int last);

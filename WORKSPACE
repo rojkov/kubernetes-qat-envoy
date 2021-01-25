@@ -8,6 +8,8 @@ http_archive(
     sha256 = "928570720f2db2395b3621c234fdf34c2aeb6c70090471608650d87aba466b48",
     strip_prefix = "QATzip-1.0.2",
     urls = ["https://github.com/intel/QATzip/archive/v1.0.2.tar.gz"],
+    patch_args = ["-p1"],
+    patches = ["@//:0001-Fix-memory-corruption-in-stream-decompression.patch"],
 )
 
 new_local_repository(

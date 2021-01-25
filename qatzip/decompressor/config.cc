@@ -21,6 +21,8 @@ QatzipDecompressorFactory::QatzipDecompressorFactory(const qatzip::decompressor:
   RELEASE_ASSERT(status == QZ_OK, "failed to initialize hardware");
 
   params.direction = QZ_DIR_DECOMPRESS;
+  params.sw_backup = 0;
+  //params.data_fmt = QZ_DEFLATE_RAW;
   tls_slot_->set([params](Event::Dispatcher&) -> ThreadLocal::ThreadLocalObjectSharedPtr {
     return std::make_shared<QatzipThreadLocal>(params);
   });
